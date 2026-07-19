@@ -98,12 +98,6 @@ INSERT INTO `audit_log` (`id`, `user_id`, `action`, `ip_address`, `created_at`) 
 (56, 1, 'Added \'LV Monogram Monogram Flower Zipped Tote MM\' to cart', '::1', '2026-07-19 03:19:29'),
 (57, 1, 'Placed order containing: Denim Urban Spirit Backpack x1, LV Monogram Monogram Flower Zipped Tote MM x1', '::1', '2026-07-19 03:19:34');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `cart`
---
-
 CREATE TABLE `cart` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -112,32 +106,16 @@ CREATE TABLE `cart` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `categories`
---
-
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `categories`
---
 
 INSERT INTO `categories` (`id`, `name`) VALUES
 (1, 'Backpacks'),
 (4, 'Crossbody'),
 (2, 'Shoulder Bags'),
 (3, 'Totes');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `orders`
---
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
@@ -148,20 +126,10 @@ CREATE TABLE `orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `orders`
---
-
 INSERT INTO `orders` (`id`, `user_id`, `total`, `status`, `payment_method`, `created_at`) VALUES
 (1, 2, 4800.00, 'Pending Payment', 'GCash (manual)', '2026-07-18 20:02:34'),
 (2, 1, 1395.00, 'Pending Payment', 'GCash (manual)', '2026-07-19 02:52:07'),
 (3, 1, 4295.00, 'Pending Payment', 'Bank Transfer', '2026-07-19 03:19:34');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `order_items`
---
 
 CREATE TABLE `order_items` (
   `id` int(11) NOT NULL,
@@ -171,21 +139,11 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `order_items`
---
-
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `price`, `quantity`) VALUES
 (1, 1, 1, 4800.00, 1),
 (2, 2, 3, 1395.00, 1),
 (3, 3, 7, 2900.00, 1),
 (4, 3, 3, 1395.00, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `products`
---
 
 CREATE TABLE `products` (
   `id` int(11) NOT NULL,
@@ -211,12 +169,6 @@ INSERT INTO `products` (`id`, `category_id`, `name`, `description`, `price`, `st
 (6, 2, 'Miu Miu', 'Miu Miu Shoulder Bag\r\nBrown Suede\r\nAntiqued Silver-Tone Hardware\r\nSingle Adjustable Shoulder Strap\r\nFive Exterior Pockets\r\nSatin Lining & Single Interior Pocket\r\nZip Closure at Top\r\nIncludes Dust Bag', 2800.00, 3, '1784429223_MIU253614_1_enlarged.webp', '2026-07-19 02:47:03'),
 (7, 1, 'Denim Urban Spirit Backpack', 'Chanel Backpack\r\nFrom the Spring/Summer 2015-2016 Collection by Karl Lagerfeld\r\nOrange Denim\r\nInterlocking CC Logo\r\nGold-Tone Hardware\r\nLeather Trim\r\nDual Adjustable Shoulder Straps\r\nLeather & Chain-Link Accents\r\nSingle Exterior Pocket\r\nGrosgrain Lining & Dual Interior Pockets\r\nTurn-Lock Closure at Front\r\nIncludes Authenticity Card', 2900.00, 4, '1784431007_CHA1467729_1_enlarged.webp', '2026-07-19 03:16:47');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
@@ -232,10 +184,6 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
-
 INSERT INTO `users` (`id`, `first_name`, `middle_name`, `surname`, `email`, `password`, `address`, `contact_number`, `role`, `status`, `verify_token`, `created_at`) VALUES
 (1, 'Maverrick', 'Bajada', 'Watanabe', 'mbwatanabe@fit.edu.ph', 'watanabs', 'Quezon City', '09123456789', 'admin', 'active', NULL, '2026-07-18 18:39:28'),
 (2, 'Kim', '', 'Dokja', 'kimdokja@gmail.com', 'bihyung', 'Seoul, South Korea', '09111111111', 'buyer', 'active', NULL, '2026-07-18 18:44:11'),
@@ -244,144 +192,71 @@ INSERT INTO `users` (`id`, `first_name`, `middle_name`, `surname`, `email`, `pas
 (5, 'Althea', 'Bajada', 'Valdez', 'abvaldez@gmail.com', 'dancingqueen', 'Quezon City', '09192564567', 'buyer', 'active', NULL, '2026-07-18 19:10:31'),
 (6, 'Janella', '', 'Bajada', 'jbajada@gmail.com', 'pengu', 'Quezon City', '09234567423', 'buyer', 'active', NULL, '2026-07-19 03:18:50');
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `audit_log`
---
 ALTER TABLE `audit_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
---
--- Indexes for table `cart`
---
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uniq_user_product` (`user_id`,`product_id`),
   ADD KEY `product_id` (`product_id`);
 
---
--- Indexes for table `categories`
---
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
 
---
--- Indexes for table `orders`
---
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
---
--- Indexes for table `order_items`
---
 ALTER TABLE `order_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `order_id` (`order_id`),
   ADD KEY `product_id` (`product_id`);
 
---
--- Indexes for table `products`
---
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`),
   ADD KEY `category_id` (`category_id`);
 
---
--- Indexes for table `users`
---
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `audit_log`
---
 ALTER TABLE `audit_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
---
--- AUTO_INCREMENT for table `cart`
---
 ALTER TABLE `cart`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
---
--- AUTO_INCREMENT for table `categories`
---
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `orders`
---
 ALTER TABLE `orders`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT for table `order_items`
---
 ALTER TABLE `order_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `products`
---
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT for table `users`
---
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `audit_log`
---
 ALTER TABLE `audit_log`
   ADD CONSTRAINT `audit_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
---
--- Constraints for table `cart`
---
 ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
---
--- Constraints for table `orders`
---
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
---
--- Constraints for table `order_items`
---
 ALTER TABLE `order_items`
   ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
---
--- Constraints for table `products`
---
 ALTER TABLE `products`
   ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
