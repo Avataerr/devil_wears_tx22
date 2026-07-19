@@ -1,4 +1,5 @@
 <?php
+//change this based on the web hosting server credentials
 $host = "localhost";
 $user = "root";
 $pass = "";
