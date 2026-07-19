@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["role"] = $user["role"];
             $_SESSION["name"] = $user["first_name"];
 
-            log_action($conn, "Logged in");
+            log_action($conn, "Logged into the system");
 
             if ($user["role"] === "admin") {
                 redirect("admin/index.php");

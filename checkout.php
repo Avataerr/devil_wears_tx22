@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $payment_method = trim($_POST["payment_method"] ?? "Cash on Delivery");
 
     $cart = $conn->prepare("
-        SELECT cart.product_id, cart.quantity, products.price, products.stock, products.image
+        SELECT cart.product_id, cart.quantity, products.name, products.price, products.stock, products.image
         FROM cart
         JOIN products ON cart.product_id = products.id
         WHERE cart.user_id = ?
@@ -56,12 +56,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $clear->execute();
     $clear->close();
 
-    log_action($conn, "Placed order #$order_id");
+    $productNames = [];
+
+    foreach ($rows as $r) {
+
+        $productNames[] =
+            $r["name"] .
+            " x" .
+            $r["quantity"];
+
+    }
+
+    log_action(
+        $conn,
+        "Placed order containing: " .
+        implode(", ", $productNames)
+    );
+
     redirect("payment.php?order_id=" . $order_id);
 }
 
 $cart = $conn->prepare("
-    SELECT cart.quantity, products.name, products.price
+    SELECT cart.quantity, products.name, products.price, products.image
     FROM cart
     JOIN products ON cart.product_id = products.id
     WHERE cart.user_id = ?

@@ -28,7 +28,23 @@ if (isset($_POST["add_to_cart"])) {
     }
 
     $check->close();
-    log_action($conn, "Added product $pid to cart");
+    $get = $conn->prepare("
+    SELECT name
+    FROM products
+    WHERE id=?
+    ");
+
+    $get->bind_param("i",$pid);
+    $get->execute();
+
+    $product = $get->get_result()->fetch_assoc();
+
+    $get->close();
+
+    log_action(
+        $conn,
+        "Added '".$product["name"]."' to cart"
+    );
     redirect("cart.php");
 }
 
@@ -37,9 +53,23 @@ if (isset($_GET["remove"])) {
     $del = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
     $del->bind_param("ii", $uid, $pid);
     $del->execute();
-    $del->close();
+    $get = $conn->prepare("
+        SELECT name
+        FROM products
+        WHERE id=?
+        ");
 
-    log_action($conn, "Removed product $pid from cart");
+        $get->bind_param("i",$pid);
+        $get->execute();
+
+        $product = $get->get_result()->fetch_assoc();
+
+        $get->close();
+
+    log_action(
+        $conn,
+        "Removed '".$product["name"]."' from cart"
+    );
     redirect("cart.php");
 }
 

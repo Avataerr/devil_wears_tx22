@@ -1,7 +1,7 @@
-
 </main>
 <footer class="footer-wrap">
     <div class="container text-center">
+        <div class="brand-text mb-3">Devil Wears TX22</div>
         <div class="footer-note mb-1">
             <strong>Group Name:</strong> Cunk Fu &nbsp;|&nbsp; <strong>Logo:</strong> DT
         </div>

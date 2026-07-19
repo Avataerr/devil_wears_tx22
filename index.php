@@ -10,61 +10,75 @@ $products = $conn->query("
 ");
 ?>
 
-<div class="hero-panel mb-4">
-    <div class="hero-kicker">TX22 Bag Collection</div>
-    <h1 class="hero-title">Find the right bag for class, travel, and everyday use.</h1>
+<section class="hero-panel mb-5">
+    <div class="hero-kicker">The TX22 Collection</div>
+    <h1 class="hero-title">
+        The Devil<br>
+        Wears <span class="accent-word">Bags.</span>
+    </h1>
     <p class="hero-text">
-        Browse our bag categories, add items to your cart, and proceed to checkout.
-        This project is built for educational purposes only.
+        Statement bags for class, travel, work, and everyday life. Explore our latest collection and carry your style with confidence.
     </p>
-</div>
+</section>
 
-<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
     <div>
-        <div class="section-title mb-1">Featured Products</div>
-        <div class="muted">All products are grouped by category.</div>
+        <div class="section-title mb-1">Featured Collection</div>
+        <div class="muted">Browse bags arranged by category.</div>
     </div>
-    <span class="pill">Secure checkout demo</span>
+    <span class="pill">Educational Store Demo</span>
 </div>
 
-<div class="row g-3">
-<?php if ($products->num_rows === 0): ?>
-    <div class="col-12">
-        <div class="page-card p-4 text-center">
-            <h2 class="h5 mb-2">No products yet</h2>
-            <p class="muted mb-0">The admin can add bags, set prices, and manage stock from the seller side.</p>
-        </div>
-    </div>
-<?php else: ?>
-    <?php while ($p = $products->fetch_assoc()): ?>
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
+<?php
+$currentCategory = "";
+
+while ($p = $products->fetch_assoc()):
+    if ($currentCategory != $p["category_name"]):
+        if ($currentCategory != "") {
+            echo "</div>"; // Closes the previous .row
+        }
+        $currentCategory = $p["category_name"];
+?>
+
+        <h2 class="section-title mt-5 mb-4"><?= h($currentCategory) ?></h2>
+        <div class="row g-4">
+
+<?php 
+    endif; 
+?>
+
+    <div class="col-sm-6 col-lg-4">
+        <article class="card h-100">
             <?php if (!empty($p["image"])): ?>
-                <img src="uploads/products/<?= h($p["image"]) ?>"
-                    class="card-img-top product-card-image"
-                    alt="<?= h($p["name"]) ?>">
+                <img src="uploads/products/<?= h($p["image"]) ?>" class="card-img-top product-card-image" alt="<?= h($p["name"]) ?>">
             <?php endif; ?>
 
             <div class="card-body">
-                <span class="badge bg-secondary mb-2"><?= h($p["category_name"]) ?></span>
-                <h5 class="card-title"><?= h($p["name"]) ?></h5>
+                <h3 class="card-title h4"><?= h($p["name"]) ?></h3>
                 <p class="card-text"><?= h($p["description"]) ?></p>
-                <p class="fw-bold">₱<?= number_format((float)$p["price"], 2) ?></p>
-                <p class="text-muted mb-3">Stock: <?= (int)$p["stock"] ?></p>
+                <p class="product-price">₱<?= number_format($p["price"], 2) ?></p>
+                <p class="product-stock">Stock: <?= $p["stock"] ?></p>
 
                 <?php if (is_logged_in()): ?>
-                <form method="post" action="cart.php">
-                    <input type="hidden" name="product_id" value="<?= (int)$p["id"] ?>">
-                    <button class="btn btn-dark btn-sm" name="add_to_cart">Add to Cart</button>
-                </form>
+                    <form method="post" action="cart.php">
+                        <input type="hidden" name="product_id" value="<?= $p["id"] ?>">
+                        <button class="btn btn-dark w-100" name="add_to_cart" <?= $p["stock"] <= 0 ? "disabled" : "" ?>>
+                            <?= $p["stock"] <= 0 ? "Out of Stock" : "Add to Cart" ?>
+                        </button>
+                    </form>
                 <?php else: ?>
-                <a class="btn btn-outline-dark btn-sm" href="login.php">Login to buy</a>
+                    <a class="btn btn-outline-dark w-100" href="login.php">Login to Buy</a>
                 <?php endif; ?>
             </div>
-            </div>
-        </div>
-    <?php endwhile; ?>
-<?php endif; ?>
-</div>
+        </article>
+    </div>
+
+<?php 
+endwhile; 
+
+if ($currentCategory != "") {
+    echo "</div>";
+}
+?>
 
 <?php require_once __DIR__ . "/footer.php"; ?>

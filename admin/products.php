@@ -38,18 +38,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_product"])) {
     $stmt->execute();
     $stmt->close();
 
-    log_action($conn, "Added product: " . $name);
+    // Get the category name
+    $getCategory = $conn->prepare("SELECT name FROM categories WHERE id = ?");
+    $getCategory->bind_param("i", $category_id);
+    $getCategory->execute();
+    $categoryName = $getCategory->get_result()->fetch_assoc()["name"];
+    $getCategory->close();
+
+    log_action(
+        $conn,
+        "Added product '" . $name .
+        "' (Category: " . $categoryName .
+        ", Price: ₱" . number_format($price, 2) .
+        ", Stock: " . $stock . ")"
+    );
+
     redirect("products.php");
 }
 
 if (isset($_GET["delete"])) {
+
     $id = (int)$_GET["delete"];
+
+    // Get product name first
+    $get = $conn->prepare("SELECT name FROM products WHERE id = ?");
+    $get->bind_param("i", $id);
+    $get->execute();
+    $product = $get->get_result()->fetch_assoc();
+    $get->close();
+
     $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
 
-    log_action($conn, "Deleted product #$id");
+    log_action(
+        $conn,
+        "Deleted product '" . $product["name"] . "'"
+    );
+
     redirect("products.php");
 }
 
@@ -83,12 +110,10 @@ $products = $conn->query("SELECT p.*, c.name AS category_name FROM products p JO
             </div>
 
             <div class="col-md-3">
-                <textarea
-                    name="description"
+                <textarea name="description"
                     class="form-control"
                     rows="2"
-                    placeholder="Product description">
-                </textarea>
+                    placeholder="Product description"></textarea>
             </div>
 
             <div class="col-md-1">

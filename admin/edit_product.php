@@ -68,7 +68,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
     $stmt->close();
 
-    log_action($conn, "Updated product: " . $name);
+    log_action(
+        $conn,
+        "Updated product '" . $name .
+        "' (Price: ₱" . number_format($price,2) .
+        ", Stock: " . $stock . ")"
+    );
     redirect("products.php");
 }
 
