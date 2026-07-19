@@ -1,31 +1,13 @@
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
---
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2026 at 05:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `devil_wears_tx22`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `audit_log`
---
 
 CREATE TABLE `audit_log` (
   `id` int(11) NOT NULL,
@@ -34,10 +16,6 @@ CREATE TABLE `audit_log` (
   `ip_address` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `audit_log`
---
 
 INSERT INTO `audit_log` (`id`, `user_id`, `action`, `ip_address`, `created_at`) VALUES
 (1, 1, 'Logged in', '::1', '2026-07-18 18:57:08'),
@@ -155,10 +133,6 @@ CREATE TABLE `products` (
   `image` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `products`
---
 
 INSERT INTO `products` (`id`, `category_id`, `name`, `description`, `price`, `stock`, `image`, `created_at`) VALUES
 (1, 2, 'Galleria small patent Saffiano leather bag', 'The Prada Galleria bag is rediscovered each season with new interpretations that enhance its timeless silhouette. The accessory presented in a small version is enhanced by the elegant finish of Saffiano leather with a patent effect that gives the iconic style sophisticated allure.', 4800.00, 9, '1784402506_34727761_66070465_1000.webp', '2026-07-18 19:21:46'),
