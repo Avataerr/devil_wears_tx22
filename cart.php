@@ -28,24 +28,39 @@ if (isset($_POST["add_to_cart"])) {
     }
 
     $check->close();
+
     $get = $conn->prepare("
-    SELECT name
-    FROM products
-    WHERE id=?
+        SELECT name
+        FROM products
+        WHERE id = ?
     ");
-
-    $get->bind_param("i",$pid);
+    $get->bind_param("i", $pid);
     $get->execute();
-
     $product = $get->get_result()->fetch_assoc();
-
     $get->close();
+
+    $success_message = "Added '" . ($product["name"] ?? "item") . "' to cart.";
 
     log_action(
         $conn,
-        "Added '".$product["name"]."' to cart"
+        "Added '" . ($product["name"] ?? "item") . "' to cart"
     );
-    redirect("cart.php");
+
+    $is_ajax =
+        !empty($_POST["ajax"]) ||
+        (($_SERVER["HTTP_X_REQUESTED_WITH"] ?? "") === "XMLHttpRequest");
+
+    if ($is_ajax) {
+        header("Content-Type: application/json; charset=utf-8");
+        echo json_encode([
+            "success" => true,
+            "message" => $success_message
+        ]);
+        exit;
+    }
+
+    $_SESSION["cart_success"] = $success_message;
+    redirect($_SERVER["HTTP_REFERER"] ?? "index.php");
 }
 
 if (isset($_GET["remove"])) {
@@ -94,10 +109,16 @@ require_once __DIR__ . "/header.php";
     <a href="index.php" class="btn btn-outline-dark">Continue Shopping</a>
 </div>
 
-<div class="page-card p-3 p-md-4">
-    <?php if ($result->num_rows === 0): ?>
-        <p class="mb-0">Your cart is empty.</p>
-    <?php else: ?>
+<div class="page-card p-3 p-md-4 cart-page">
+    
+<?php if ($result->num_rows === 0): ?>
+    <div class="empty-cart">
+        <h3>Your cart is empty.</h3>
+        <a href="index.php" class="btn btn-dark mt-3">
+            Continue Shopping
+        </a>
+    </div>
+<?php else: ?>
         <div class="table-responsive">
             <table class="table align-middle mb-0">
                 <thead>

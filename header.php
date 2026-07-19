@@ -13,13 +13,16 @@ require_once __DIR__ . "/config/functions.php";
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= h(site_url('css/style.css')) ?>?v=<?= filemtime(__DIR__ . '/css/style.css') ?>" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-3" href="<?= h(site_url('index.php')) ?>">
-            <span class="brand-mark">DT</span>
-            <span class="brand-text">Devil Wears<br>TX22</span>
+        <a class="navbar-brand" href="<?= h(site_url('index.php')) ?>">
+            <img
+                src="<?= h(site_url('uploads/logo.png')) ?>"
+                class="brand-logo"
+                alt="Devil Wears TX22">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">

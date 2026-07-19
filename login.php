@@ -3,6 +3,10 @@ require_once __DIR__ . "/config/functions.php";
 
 $page_title = "Login";
 $error = "";
+$msg = "";
+    if (isset($_GET["registered"])) {
+    $msg = "Registration successful! Please log in.";
+    }
 
 if (is_logged_in()) {
     redirect(is_admin() ? "admin/index.php" : "index.php");
@@ -55,6 +59,12 @@ require_once __DIR__ . "/header.php";
 
                 <?php if ($error): ?>
                     <div class="alert alert-danger"><?= h($error) ?></div>
+                <?php endif; ?>
+
+                <?php if ($msg): ?>
+                    <div class="alert alert-success">
+                        <?= h($msg) ?>
+                    </div>
                 <?php endif; ?>
 
                 <form method="post">

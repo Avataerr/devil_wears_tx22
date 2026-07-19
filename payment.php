@@ -16,7 +16,7 @@ require_once __DIR__ . "/header.php";
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="page-card p-4">
-            <h1 class="page-heading mb-2">Payment Page</h1>
+            <h1 class="page-heading mb-2">Order received</h1>
             <?php if (!$data): ?>
                 <div class="alert alert-danger">Order not found.</div>
             <?php else: ?>

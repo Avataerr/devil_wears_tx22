@@ -8,25 +8,25 @@ $uid = (int)$_SESSION["user_id"];
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $payment_method = trim($_POST["payment_method"] ?? "Cash on Delivery");
 
-    $cart = $conn->prepare("
-        SELECT cart.product_id, cart.quantity, products.name, products.price, products.stock, products.image
-        FROM cart
-        JOIN products ON cart.product_id = products.id
-        WHERE cart.user_id = ?
+    $stmt = $conn->prepare("
+        SELECT c.product_id, c.quantity, p.name, p.price, p.stock
+        FROM cart c
+        JOIN products p ON c.product_id = p.id
+        WHERE c.user_id = ?
     ");
-    $cart->bind_param("i", $uid);
-    $cart->execute();
-    $items = $cart->get_result();
+    $stmt->bind_param("i", $uid);
+    $stmt->execute();
+    $items = $stmt->get_result();
 
     if ($items->num_rows === 0) {
         redirect("cart.php");
     }
 
-    $total = 0;
     $rows = [];
+    $total = 0;
 
     while ($r = $items->fetch_assoc()) {
-        if ((int)$r["quantity"] > (int)$r["stock"]) {
+        if ($r["quantity"] > $r["stock"]) {
             die("Not enough stock for one of the items.");
         }
         $rows[] = $r;
@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $order_id = $conn->insert_id;
     $order->close();
 
+    $names = [];
     foreach ($rows as $r) {
         $oi = $conn->prepare("INSERT INTO order_items (order_id, product_id, price, quantity) VALUES (?, ?, ?, ?)");
         $oi->bind_param("iidi", $order_id, $r["product_id"], $r["price"], $r["quantity"]);
@@ -49,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $upd->bind_param("ii", $r["quantity"], $r["product_id"]);
         $upd->execute();
         $upd->close();
+
+        $names[] = $r["name"] . " x" . $r["quantity"];
     }
 
     $clear = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
@@ -56,35 +59,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $clear->execute();
     $clear->close();
 
-    $productNames = [];
-
-    foreach ($rows as $r) {
-
-        $productNames[] =
-            $r["name"] .
-            " x" .
-            $r["quantity"];
-
-    }
-
-    log_action(
-        $conn,
-        "Placed order containing: " .
-        implode(", ", $productNames)
-    );
-
+    log_action($conn, "Placed order containing: " . implode(", ", $names));
     redirect("payment.php?order_id=" . $order_id);
 }
 
-$cart = $conn->prepare("
-    SELECT cart.quantity, products.name, products.price, products.image
-    FROM cart
-    JOIN products ON cart.product_id = products.id
-    WHERE cart.user_id = ?
+$stmt = $conn->prepare("
+    SELECT c.quantity, p.name, p.price, p.image
+    FROM cart c
+    JOIN products p ON c.product_id = p.id
+    WHERE c.user_id = ?
 ");
-$cart->bind_param("i", $uid);
-$cart->execute();
-$result = $cart->get_result();
+$stmt->bind_param("i", $uid);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $total = 0;
 while ($row = $result->fetch_assoc()) {
@@ -94,6 +81,7 @@ $result->data_seek(0);
 
 require_once __DIR__ . "/header.php";
 ?>
+
 <div class="row g-3">
     <div class="col-lg-7">
         <div class="page-card p-4">
@@ -102,11 +90,11 @@ require_once __DIR__ . "/header.php";
 
             <form method="post" class="mt-3">
                 <label class="form-label">Payment Method</label>
-                <select name="payment_method" class="form-select mb-3">
-                    <option>Cash on Delivery</option>
-                    <option>Bank Transfer</option>
-                    <option>GCash (manual)</option>
-                </select>
+                <div class="mb-3">
+                    <input type="radio" name="payment_method" value="Cash on Delivery" checked> Cash on Delivery<br>
+                    <input type="radio" name="payment_method" value="Bank Transfer"> Bank Transfer<br>
+                    <input type="radio" name="payment_method" value="GCash (manual)"> GCash (Manual)
+                </div>
                 <button class="btn btn-dark">Place Order</button>
             </form>
         </div>
@@ -115,29 +103,26 @@ require_once __DIR__ . "/header.php";
     <div class="col-lg-5">
         <div class="page-card p-4">
             <div class="section-title">Order Summary</div>
+
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex align-items-center gap-3">
                         <?php if (!empty($row["image"])): ?>
-                            <img
-                            src="uploads/products/<?= h($row["image"]) ?>"
-                            class="product-thumb-small"
-                            alt="<?= h($row["name"]) ?>"
-                            >
+                            <img src="uploads/products/<?= h($row["image"]) ?>" class="product-thumb-small" alt="<?= h($row["name"]) ?>">
                         <?php endif; ?>
-                    <div>
-                        <strong><?= h($row["name"]) ?></strong><br>
-                        Qty: <?= (int)$row["quantity"] ?>
-                     </div>
+                        <div>
+                            <strong><?= h($row["name"]) ?></strong><br>
+                            Qty: <?= (int)$row["quantity"] ?>
+                        </div>
+                    </div>
+                    <strong>₱<?= number_format($row["price"] * $row["quantity"], 2) ?></strong>
                 </div>
-                    <strong>
-                        ₱<?= number_format($row["price"] * $row["quantity"],2) ?>
-                    </strong>
-            </div>
             <?php endwhile; ?>
+
             <hr>
-            <strong>Total: ₱<?= number_format((float)$total, 2) ?></strong>
+            <strong>Total: ₱<?= number_format($total, 2) ?></strong>
         </div>
     </div>
 </div>
+
 <?php require_once __DIR__ . "/footer.php"; ?>
